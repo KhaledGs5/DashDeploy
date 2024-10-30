@@ -1,0 +1,6 @@
+Django  # Django version, adjust as needed
+djangorestframework # Django REST framework version, adjust as needed
+paho-mqtt # MQTT client library for Python
+django-cors-headers
+psycopg2
+psycopg2-binary

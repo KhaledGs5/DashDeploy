@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  mqtt:
+    image: eclipse-mosquitto
+    container_name: mqtt_broker
+    ports:
+      - "1883:1883"
+    networks:
+      my_network: {}
+
+  backend:
+    build: ./Backend/
+    container_name: django_backend
+    command: python manage.py runserver
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: 'django-insecure-j0*%%n$$xht9$$tx!$$=e#z0y&ofrr6^wq-5!k2h(j4gaj17kz7lb9'
+      DEBUG: 'True'
+      DB_NAME: 'Data'
+      DB_USER: 'postgres' 
+      DB_PASSWORD: 'khaled5'
+      DB_HOST: 'db'
+      DB_PORT: '5432'
+    depends_on:
+      - db
+    volumes:
+      - "./Backend/:/app"
+      - "/app/node_modules"
+    networks:
+      my_network: {}
+
+  frontend:
+    build: ./Frontend/
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - "./Frontend/:/app"
+      - "/app/node_modules"
+    networks:
+      my_network: {}
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: 'Data'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'khaled5'
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      my_network: {}
+
+networks:
+  my_network:
+
+volumes:
+  postgres_data: {}
